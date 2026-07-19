@@ -1,0 +1,51 @@
+{
+  "name": "kotodama-m4l4k001",
+  "main": "svelte/.svelte-kit/cloudflare/_worker.js",
+  "compatibility_date": "2025-03-17",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_als"
+  ],
+  "assets": {
+    "directory": "./svelte/.svelte-kit/cloudflare/client",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application"
+  },
+  "vars": {
+    "APP_ACTOR_HANDLE": "malak",
+    "APP_CAPABILITIES": "[\"cybercrime-intelligence\",\"threat-analysis\"]",
+    "APP_DEPLOY_AT": "2026-04-28T07:14:36Z",
+    "APP_DEPLOY_SHA": "b25d358f15c",
+    "APP_DESCRIPTION": "Malak — AI Agent for cybercrime intelligence, threat actor tracking, and law enforcement coordination",
+    "APP_DISPLAY_NAME": "Malak",
+    "APP_EMBED_URL": "https://m4l4k001.etzhayyim.com/?embed=1",
+    "APP_FRAMEWORK": "sveltekit-edge-bff",
+    "AGENTGATEWAY_MCP_ROUTER_URL": "https://mcp.etzhayyim.com/xrpc/com.etzhayyim.mcp.message",
+    "APP_NANOID": "m4l4k001",
+    "APP_PERFORMER_TYPE": "service",
+    "APP_SOURCE": "custom",
+    "APP_TEMPLATE": "",
+    "APP_UI_TYPE": "appview",
+    "APP_VERSION": "0.4.0",
+    "INTERFACES_REQUIRES": "[\"etzhayyim:collection/collection@1.0.0\"]"
+  },
+  "rules": [
+    {
+      "type": "CompiledWasm",
+      "globs": [
+        "**/*.wasm"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "m4l4k001.etzhayyim.com/*",
+      "zone_name": "etzhayyim.com"
+    },
+    {
+      "pattern": "malak.etzhayyim.com/*",
+      "zone_name": "etzhayyim.com"
+    }
+  ]
+}

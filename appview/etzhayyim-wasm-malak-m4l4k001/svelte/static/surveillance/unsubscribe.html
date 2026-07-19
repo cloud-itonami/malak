@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja" data-lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title lang="ja">配信停止 — malak.surveillance</title>
+<title lang="en">Unsubscribe — malak.surveillance</title>
+<link rel="stylesheet" href="_shared.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="brand">malak.surveillance</div>
+  <nav>
+    <a href="index.html"><span lang="ja">トップ</span><span lang="en">Top</span></a>
+    <a href="tech.html"><span lang="ja">技術</span><span lang="en">Tech</span></a>
+    <a href="trust.html"><span lang="ja">プライバシー</span><span lang="en">Privacy</span></a>
+    <a href="contact.html"><span lang="ja">問合せ</span><span lang="en">Contact</span></a>
+    <a href="unsubscribe.html"><span lang="ja">配信停止</span><span lang="en">Unsubscribe</span></a>
+    <span class="lang-toggle" role="group"><button data-set="ja">日本語</button><button data-set="en">EN</button></span>
+  </nav>
+</header>
+
+<main>
+<h1 lang="ja">配信停止</h1>
+<h1 lang="en">Unsubscribe</h1>
+
+<p lang="ja">本フォームから即時に配信停止を承ります。<br/>特定電子メール法 §3 / CAN-SPAM / PECR / GDPR に基づき、以後 malak.surveillance に関する営業連絡をお送りしません。関連 ciphertext + wrapped key は即時物理削除します。</p>
+<p lang="en">This form processes opt-out immediately. Compliant with Japan's Anti-Spam Act §3, US CAN-SPAM, UK PECR, and EU GDPR — we will not send further malak.surveillance outreach. The associated ciphertext + wrapped key will be physically destroyed at once.</p>
+
+<div id="result" class="result" style="display:none"></div>
+
+<form id="unsubscribe-form">
+  <input type="hidden" name="token" id="token-field" />
+  <fieldset>
+    <legend lang="ja">配信停止理由</legend>
+    <legend lang="en">Reason (optional)</legend>
+    <label>
+      <span lang="ja">理由</span><span lang="en">Reason</span>
+      <small lang="ja">(任意 — 改善のため)</small>
+      <small lang="en">(optional — helps us improve)</small>
+      <textarea name="reason" maxlength="240" rows="3"></textarea>
+    </label>
+    <p class="notice" lang="ja">理由欄に個人を特定し得る情報を含めないでください (記載があった場合は backend で破棄します)。</p>
+    <p class="notice" lang="en">Please do not include personally-identifying details in the reason field; if any are submitted, they are discarded backend-side.</p>
+  </fieldset>
+  <button class="submit" type="submit"><span lang="ja">配信停止する</span><span lang="en">Confirm unsubscribe</span></button>
+</form>
+
+<p class="back" style="margin-top:2rem;font-size:0.85rem;">
+  <a href="index.html"><span lang="ja">← トップへ戻る</span><span lang="en">← back to top</span></a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div lang="ja">運営: amanomibashira / 技術受託: Etzhayyim Japan株式会社</div>
+  <div lang="en">Operating entity: amanomibashira / Technical contractor: Etzhayyim Japan株式会社</div>
+  <div class="postal">amanomibashira c/o Etzhayyim Japan株式会社 — 〒XXX-XXXX 東京都千代田区 ...</div>
+  <div>privacy@etzhayyim.ai · malak-surveillance@etzhayyim.ai</div>
+</footer>
+
+<script src="_shared.js"></script>
+<script>
+(function () {
+  const form = document.getElementById("unsubscribe-form");
+  const result = document.getElementById("result");
+  const tokenField = document.getElementById("token-field");
+  function lang() { return document.documentElement.getAttribute("data-lang") || "ja"; }
+  function msg(ja, en) { return lang() === "en" ? en : ja; }
+  // Read token from URL ?t=...
+  const url = new URL(location.href);
+  const token = url.searchParams.get("t") || "";
+  tokenField.value = token;
+  if (!token) {
+    result.textContent = msg(
+      "配信停止リンクが不正です。受信メール末尾のリンクから再度アクセスしてください。",
+      "The unsubscribe link is invalid. Please use the link in the bottom of any message you received."
+    );
+    result.className = "result err"; result.style.display = "block";
+  }
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    if (!token) return;
+    const fd = new FormData(form);
+    const payload = {
+      token: token,
+      reason: fd.get("reason") || "",
+      userAgent: navigator.userAgent,
+    };
+    try {
+      const res = await fetch("/xrpc/com.etzhayyim.apps.malak.unsubscribeAgencyOutreach", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const j = await res.json().catch(function () { return {}; });
+      if (j.status === "unsubscribed" || j.status === "alreadyUnsubscribed" || j.status === "phase0_stub") {
+        result.textContent = msg(
+          "配信停止を承りました。今後 amanomibashira / Etzhayyim Japan からの malak.surveillance に関するメールはお送りしません。",
+          "Unsubscribed. We will not send further malak.surveillance outreach from amanomibashira / Etzhayyim Japan."
+        );
+        result.className = "result ok"; form.style.display = "none";
+      } else if (j.status === "tokenExpired") {
+        result.textContent = msg(
+          "配信停止リンクの有効期限が切れています。お手数ですが malak-surveillance@etzhayyim.ai までご一報ください。",
+          "The unsubscribe link has expired. Please email malak-surveillance@etzhayyim.ai."
+        );
+        result.className = "result err";
+      } else {
+        result.textContent = msg(
+          "処理できませんでした (" + (j.status || res.status) + "). " + (j.error || ""),
+          "Could not process (" + (j.status || res.status) + "). " + (j.error || "")
+        );
+        result.className = "result err";
+      }
+    } catch (err) {
+      result.textContent = msg("送信エラー: ", "Submit error: ") + err.message;
+      result.className = "result err";
+    }
+    result.style.display = "block";
+  });
+})();
+</script>
+</body>
+</html>

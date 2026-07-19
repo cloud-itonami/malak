@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja" data-lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title lang="ja">プライバシー設計と法令準拠 — malak.surveillance</title>
+<title lang="en">Privacy &amp; compliance — malak.surveillance</title>
+<link rel="stylesheet" href="_shared.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="brand">malak.surveillance</div>
+  <nav>
+    <a href="index.html"><span lang="ja">トップ</span><span lang="en">Top</span></a>
+    <a href="tech.html"><span lang="ja">技術</span><span lang="en">Tech</span></a>
+    <a href="trust.html"><span lang="ja">プライバシー</span><span lang="en">Privacy</span></a>
+    <a href="contact.html"><span lang="ja">問合せ</span><span lang="en">Contact</span></a>
+    <a href="unsubscribe.html"><span lang="ja">配信停止</span><span lang="en">Unsubscribe</span></a>
+    <span class="lang-toggle" role="group"><button data-set="ja">日本語</button><button data-set="en">EN</button></span>
+  </nav>
+</header>
+
+<main>
+<h1 lang="ja">プライバシー設計と法令準拠</h1>
+<h1 lang="en">Privacy design &amp; compliance</h1>
+
+<section>
+  <h2><span lang="ja">1. 顔特徴量の取扱い</span><span lang="en">1. Handling of face templates</span></h2>
+  <ul lang="ja">
+    <li>顔特徴量 (face template) は<strong>要配慮個人情報相当</strong>として扱います (個情委 生体識別子ガイドライン草案準拠)。</li>
+    <li>抽出と保管は日本国内 GPU 拠点で完結。Cloudflare / 外部 LLM / 海外推論基盤への送信は protocol レベルで遮断。</li>
+    <li>保管時は AES-256-GCM 暗号化 + vault key rotation。Worker / Hyperdrive / R2 等のエッジ層には平文が一切到達しません。</li>
+    <li>案件解決 1 年経過後、ciphertext + wrapped key を物理削除 (hard delete)。soft delete 禁止。</li>
+  </ul>
+  <ul lang="en">
+    <li>Face templates are treated as <strong>sensitive personal data class</strong> (per PPC biometric guidelines draft).</li>
+    <li>Extraction and storage are completed inside a Japan-based GPU site; protocol-level egress blocks to Cloudflare / external LLMs / overseas inference providers.</li>
+    <li>At rest: AES-256-GCM + vault key rotation. Plaintext never reaches the Worker / Hyperdrive / R2 edge layer.</li>
+    <li>After 1 year from case resolution the ciphertext + wrapped key are physically destroyed (hard delete). Soft delete is forbidden.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span lang="ja">2. 検索経路の分離</span><span lang="en">2. Path-level separation</span></h2>
+  <ul lang="ja">
+    <li>シーン記述検索 (色・服装・物体・行動) は人物特定情報を返さず、令状不要 (任意捜査範囲)。</li>
+    <li>既知人物の再特定 (queryPerson) は、捜索差押許可状その他令状又は捜査関係事項照会書番号の入力なしには起動しません (edge layer 403 即返却)。さらに上席 (supervisor) 承認が consent helper の二段ゲートを構成。</li>
+    <li>top-1 自動採用は不可能 — investigator の人間判定記録なしには証拠パケット出力 (exportSurveillanceEvidence) に進めません。</li>
+  </ul>
+  <ul lang="en">
+    <li>Scene-description search (colour / clothing / object / action) returns no person identification and runs without a warrant (ordinary administrative-investigation scope).</li>
+    <li>Person re-identification (queryPerson) cannot launch without a warrant or formal-enquiry reference; the edge layer returns 403 immediately. Supervisor approval forms a second consent-helper gate.</li>
+    <li>Top-1 auto-adoption is architecturally impossible — the LangGraph Conditional edge requires a recorded investigator review before exportSurveillanceEvidence can proceed.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span lang="ja">3. 監査と人間判断</span><span lang="en">3. Audit &amp; human judgement</span></h2>
+  <ul lang="ja">
+    <li>各操作 (令状情報・操作者 DID・mTLS 指紋・IP) を append-only で記録。保管期間 7 年 (法定)。</li>
+    <li>都道府県警の監督部署は監査ログ照会権限を持ち、改ざんは設計上不可能 (sha256 chain で検証)。</li>
+    <li>人間判断介在 (human review gate) は LangGraph の Conditional edge に組み込まれており、跳ばすことができません。</li>
+  </ul>
+  <ul lang="en">
+    <li>Every operation (warrant reference, operator DID, mTLS fingerprint, IP) is recorded append-only. Statutory retention: 7 years.</li>
+    <li>Prefectural-police oversight teams have audit-log query rights; tampering is architecturally infeasible (SHA-256 chain verification).</li>
+    <li>The human_review_gate sits as a LangGraph Conditional edge and cannot be bypassed.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span lang="ja">4. 営業連絡における opt-in</span><span lang="en">4. Opt-in regime for outreach</span></h2>
+  <ul lang="ja">
+    <li>営業メールは「特定電子メール法 §3 同意取得」の 4 経路 (展示会名簿 / 講演主催者経由 / 紹介 / inbound 問合せ) のみから送信。それ以外は技術的にブロック。</li>
+    <li>EU 加盟国向けは GDPR Article 6(1)(f) legitimate interest + Article 14 disclosure を本文に含めます。</li>
+    <li>US 向けは CAN-SPAM 16 CFR 316.5 に従い、本文末尾に sender 物理住所 + 動作する unsubscribe link を必須掲載。</li>
+    <li>UK 向けは PECR Regulation 23 に従い、unsubscribe を送信後 30 日以上稼働させます。</li>
+    <li>送信時間帯は recipient 現地時間の平日 09:00-17:00 のみ。</li>
+    <li>本文には必ずオプトアウト導線が含まれ、受信されたオプトアウトは即時処理し、関連 ciphertext + wrapped key を物理削除します。</li>
+    <li>公務員相手の営業時に、招待・贈答・粗品・無料デモ提供等の利益供与に該当し得る文言は安全ゲートでブロック (5 CFR 2635 / UK Bribery Act / EU Staff Regulations Art 11a 配慮)。</li>
+  </ul>
+  <ul lang="en">
+    <li>Outreach emails are sent only from one of four opt-in sources (event delegate list / lecture host introduction / referral / inbound enquiry) per Anti-Spam Act §3. Other sources are technically blocked.</li>
+    <li>For EU recipients we include the GDPR Art 6(1)(f) lawful basis + Art 14 disclosure in the body.</li>
+    <li>For US recipients we follow CAN-SPAM 16 CFR 316.5 — the body always carries the sender's physical mailing address + a working unsubscribe link.</li>
+    <li>For UK recipients we comply with PECR Reg 23 — the unsubscribe link stays functional for at least 30 days after send.</li>
+    <li>Send window: recipient's local-time 09:00-17:00, weekdays only.</li>
+    <li>Every message carries an opt-out path; opt-outs are processed immediately and the related ciphertext + wrapped key are physically destroyed.</li>
+    <li>For public-servant addressees, language constituting invitations, gifts, small tokens, or free-demo offers is blocked at the safety gates (compliant with US 5 CFR 2635, UK Bribery Act, EU Staff Regulations Art 11a).</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span lang="ja">5. 国際 LEA cooperation_status</span><span lang="en">5. International LEA cooperation_status</span></h2>
+  <p lang="ja">INTERPOL 196 加盟国の National Central Bureau + 主要 LEA を seed として保管。各国の cooperation_status をタグ付与し、<code>prohibited</code> の国 (CHN MSS, RUS MVD/FSB, IRN, SYR, BLR, MMR, LBY, YEM, AFG, SSD, SDN, IRQ 等) は outreach 経路で hard-exclude します。<code>restricted</code> の国は外部弁護士 (extra_approver_did) 承認なしには outreach 不可。</p>
+  <p lang="en">196 INTERPOL member NCBs + primary partner LEAs are seeded. Each jurisdiction carries a cooperation_status tag; countries marked <code>prohibited</code> (CHN MSS, RUS MVD/FSB, IRN, SYR, BLR, MMR, LBY, YEM, AFG, SSD, SDN, IRQ, etc.) are hard-excluded from outreach. Countries marked <code>restricted</code> require additional sign-off from external counsel (<code>extra_approver_did</code>) before outreach can proceed.</p>
+</section>
+
+<section>
+  <h2><span lang="ja">6. 運営・実装責任</span><span lang="en">6. Operating &amp; implementation responsibility</span></h2>
+  <table>
+    <tr><th lang="ja">運営主体</th><th lang="en">Operating entity</th><td>amanomibashira</td></tr>
+    <tr><th lang="ja">実装受託</th><th lang="en">Technical contractor</th><td>Etzhayyim Japan株式会社</td></tr>
+    <tr><th lang="ja">個情法上の取扱事業者</th><th lang="en">APPI personal-data controller</th><td>amanomibashira</td></tr>
+    <tr><th lang="ja">顔特徴量管理責任者</th><th lang="en">Face-template custodian</th><td>amanomibashira CLO</td></tr>
+    <tr><th lang="ja">インシデント窓口</th><th lang="en">Incident contact</th><td>privacy@etzhayyim.ai (24h)</td></tr>
+    <tr><th lang="ja">外部弁護士監修</th><th lang="en">External counsel</th>
+        <td><span lang="ja">Phase 0 期間中、警察庁 / 個情委 practice 経験を持つ事務所と契約 (常時 monitoring 体制)</span>
+            <span lang="en">Engaged with a firm that has NPA / PPC practice experience throughout Phase 1 onwards (continuous monitoring retainer)</span></td></tr>
+  </table>
+</section>
+
+<p class="notice">
+  <span lang="ja">本ページは警察庁通達 R6 公開草案 + 個人情報保護委員会 生体識別子ガイドライン草案を踏まえて記載しています。確定通達 / 確定ガイドライン公開後 30 日以内に整合確認のうえ更新します。</span>
+  <span lang="en">This page reflects the draft NPA R6 procurement notice + the PPC biometric guidelines draft. After publication of either final document, we will reconcile the design within 30 days.</span>
+</p>
+
+</main>
+
+<footer class="site">
+  <div lang="ja">運営: amanomibashira / 技術受託: Etzhayyim Japan株式会社</div>
+  <div lang="en">Operating entity: amanomibashira / Technical contractor: Etzhayyim Japan株式会社</div>
+  <div class="postal">amanomibashira c/o Etzhayyim Japan株式会社 — 〒XXX-XXXX 東京都千代田区 ... (CAN-SPAM physical address)</div>
+  <div>privacy@etzhayyim.ai · malak-surveillance@etzhayyim.ai</div>
+</footer>
+
+<script src="_shared.js"></script>
+</body>
+</html>

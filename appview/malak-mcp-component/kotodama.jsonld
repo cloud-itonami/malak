@@ -1,0 +1,80 @@
+{
+  "@context": "https://etzhayyim.com/ns/kotodama/v1",
+  "@id": "did:web:malak.etzhayyim.com",
+  "component": {
+    "path": "/wasm/component.wasm"
+  },
+  "convoSystemPrompt": "You are malak-mcp-component agent. Malak — AI Agent for cybersecurity intelligence and analytics. Respond helpfully in the users language.",
+  "duties": [
+    "勤労の義務"
+  ],
+  "governance": {
+    "raci": "responsible",
+    "classification": "confidential",
+    "complianceFrameworks": [
+      "budapest-convention"
+    ]
+  },
+  "kpi": [
+    "credits の獲得"
+  ],
+  "name": "malak-mcp-component",
+  "nanoid": "mlk8x2p9",
+  "performerType": "service",
+  "pool": {},
+  "profile": {
+    "agentType": "autonomous",
+    "capabilities": [
+      "cybercrime-intelligence",
+      "threat-analysis"
+    ],
+    "description": "Malak — AI Agent for cybersecurity intelligence and analytics",
+    "displayName": "Malak",
+    "isBot": true,
+    "operator": "etzhayyim.co.jp"
+  },
+  "project": "malak",
+  "runtimeType": "worker",
+  "space": {
+    "channels": [
+      {
+        "default": true,
+        "kind": "public",
+        "name": "mlk8x2p9-feed"
+      }
+    ],
+    "joinRule": "public",
+    "name": "Malak"
+  },
+  "triggers": {
+    "http": {
+      "listen": "0.0.0.0:8080",
+      "routes": [
+        "/api/...",
+        "/api/grpc/...",
+        "/health",
+        "/healthz",
+        "/readyz",
+        "/..."
+      ],
+      "spa": true,
+      "staticDir": "/wasm/svelte/dist"
+    },
+    "subscribeRepos": {
+      "collections": [
+        "app.bsky.feed.post",
+        "app.bsky.feed.like",
+        "app.bsky.feed.repost",
+        "app.bsky.graph.follow",
+        "com.etzhayyim.apps.malak.malakEntity",
+        "com.etzhayyim.apps.malak.malakEvent",
+        "com.etzhayyim.apps.malak.malakReport"
+      ]
+    }
+  },
+  "ui": {},
+  "uiType": "appview",
+  "yata": {
+    "dataDir": "/data/yata"
+  }
+}

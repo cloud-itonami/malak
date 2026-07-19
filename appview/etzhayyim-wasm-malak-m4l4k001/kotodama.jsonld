@@ -1,0 +1,166 @@
+{
+  "@context": "https://etzhayyim.com/ns/kotodama/v1",
+  "@id": "did:web:malak.etzhayyim.com",
+  "build": {
+    "guestLanguage": "go"
+  },
+  "component": {
+    "path": "component.wasm"
+  },
+  "contentLabels": {
+    "accessControl": {
+      "requireAuth": true,
+      "requireClearance": "confidential",
+      "required": true
+    },
+    "defaultLabels": [
+      "crime-intelligence",
+      "law-enforcement",
+      "restricted"
+    ],
+    "sensitiveContent": true
+  },
+  "convoSystemPrompt": "You are malak agent. Malak — AI Agent for cybercrime intelligence, threat actor tracking, and law enforcement coordination. Respond helpfully in the users language.",
+  "deploy": {},
+  "duties": [
+    "勤労の義務"
+  ],
+  "governance": {
+    "raci": "responsible",
+    "classification": "confidential",
+    "complianceFrameworks": [
+      "budapest-convention"
+    ]
+  },
+  "interfaces": {
+    "package": "etzhayyim:malak@1.0.0",
+    "requires": [
+      "etzhayyim:collection/collection@1.0.0"
+    ]
+  },
+  "kpi": [
+    "credits の獲得"
+  ],
+  "name": "malak",
+  "nanoid": "m4l4k001",
+  "performerType": "service",
+  "profile": {
+    "agentType": "autonomous",
+    "capabilities": [
+      "cybercrime-intelligence",
+      "threat-analysis"
+    ],
+    "description": "Malak — AI Agent for cybercrime intelligence, threat actor tracking, and law enforcement coordination",
+    "displayName": "Malak",
+    "isBot": true,
+    "operator": "etzhayyim.co.jp",
+    "sensitivity": "confidential"
+  },
+  "project": "malak",
+  "routes": [
+    {
+      "host": "malak.etzhayyim.com",
+      "paths": [
+        "/"
+      ],
+      "tls": true
+    },
+    {
+      "host": "m4l4k001.etzhayyim.com",
+      "paths": [
+        "/"
+      ],
+      "tls": true
+    }
+  ],
+  "runtimeType": "worker",
+  "sensitivity": "confidential",
+  "source": "custom",
+  "space": {
+    "channels": [
+      {
+        "default": true,
+        "kind": "public",
+        "name": "Threat Intel"
+      },
+      {
+        "kind": "public",
+        "name": "OSINT Feed"
+      },
+      {
+        "kind": "public",
+        "name": "Tips"
+      },
+      {
+        "kind": "private",
+        "name": "Active Investigations"
+      },
+      {
+        "kind": "private",
+        "name": "Law Enforcement"
+      },
+      {
+        "kind": "private",
+        "name": "Agency Coordination"
+      }
+    ],
+    "historyVisibility": "shared",
+    "joinRule": "invite",
+    "name": "Malak — Cybercrime Intelligence"
+  },
+  "triggers": {
+    "subscribeRepos": {
+      "collections": [
+        "app.bsky.feed.post",
+        "app.bsky.feed.like",
+        "app.bsky.feed.repost",
+        "app.bsky.graph.follow",
+        "com.etzhayyim.apps.malak.threatActor",
+        "com.etzhayyim.apps.malak.walletAddress",
+        "com.etzhayyim.apps.malak.intelReport",
+        "com.etzhayyim.apps.malak.cyberCrimeCase",
+        "com.etzhayyim.apps.malak.interpolNotice",
+        "com.etzhayyim.apps.malak.agencyReferral",
+        "com.etzhayyim.apps.malak.osintFinding",
+        "com.etzhayyim.apps.malak.sanctionEntry",
+        "com.etzhayyim.apps.malak.freezeEscalation",
+        "com.etzhayyim.apps.malak.incidentLink",
+        "com.etzhayyim.apps.malak.threatOrganization",
+        "com.etzhayyim.apps.malak.emailMessage",
+        "com.etzhayyim.apps.malak.actorAlias",
+        "com.etzhayyim.apps.malak.actorInfrastructure",
+        "com.etzhayyim.apps.malak.accessLog",
+        "com.etzhayyim.apps.malak.monitoredEntity",
+        "com.etzhayyim.apps.malak.entityAnalysis",
+        "com.etzhayyim.apps.malak.entityCorrelation",
+        "com.etzhayyim.apps.collector.blockchainActor",
+        "com.etzhayyim.apps.collector.riskSignal",
+        "com.etzhayyim.apps.yabai.entity",
+        "com.etzhayyim.apps.yabai.alert",
+        "com.etzhayyim.apps.ipaddress.ipAddress",
+        "com.etzhayyim.apps.ipaddress.ipAnalysis",
+        "com.etzhayyim.apps.sanctions.entry",
+        "com.etzhayyim.apps.sanctions.match",
+        "com.etzhayyim.apps.onion.page",
+        "com.etzhayyim.apps.onion.crawl",
+        "com.etzhayyim.apps.onion.site",
+        "com.etzhayyim.apqc.interpol.intelligence.sharing",
+        "com.etzhayyim.apqc.defense.c2isr",
+        "com.etzhayyim.apps.gmail.phishingAlert",
+        "com.etzhayyim.apps.malak.dailyEvolution",
+        "com.etzhayyim.apps.malak.engagement",
+        "com.etzhayyim.apps.malak.newFollower"
+      ]
+    }
+  },
+  "ui": {
+    "accent": "#1e3a5f",
+    "icon": "🕵️",
+    "ssrRoutes": {
+      "apps": "etzhayyim.malak.v1.MalakService/malak.tools",
+      "live": "etzhayyim.malak.v1.MalakService/malak.dashboard"
+    }
+  },
+  "uiType": "appview",
+  "version": "0.4.0"
+}

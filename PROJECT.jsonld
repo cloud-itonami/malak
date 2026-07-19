@@ -1,0 +1,147 @@
+{
+  "@context": {
+    "prov": "http://www.w3.org/ns/prov#",
+    "dct": "http://purl.org/dc/terms/",
+    "etzhayyim": "https://etzhayyim.com/schema#",
+    "name": "dct:title",
+    "description": "dct:description",
+    "status": "etzhayyim:status"
+  },
+  "@id": "https://etzhayyim.com/projects/etzhayyim-project-malak",
+  "@type": "prov:Entity",
+  "name": "Operation Malak — Cyber Crime Actor Tracking & Disclosure",
+  "description": "Autonomous cyber crime actor tracking, technical fingerprinting, intelligence analysis, and blockchain-based evidence disclosure. Coordinates with international law enforcement (Interpol) via MCP.",
+  "etzhayyim:category": "etzhayyim-project-malak",
+  "etzhayyim:appId": "operation-malak",
+  "status": "In Progress",
+  "prov:wasGeneratedBy": {
+    "@type": "prov:Activity",
+    "name": "Cyber Crime Investigation Infrastructure Development",
+    "prov:startedAtTime": "2026-02-14T00:00:00Z"
+  },
+  "etzhayyim:milestones": [
+    {
+      "name": "Operation Malak Core Implementation",
+      "status": "Completed",
+      "description": "Implemented core workflow for adversarial actor identification using DNS, email, and linguistic fingerprinting with Gemini 3 Flash intelligence analysis."
+    },
+    {
+      "name": "MCP Tool Integration",
+      "status": "Completed",
+      "description": "Implemented MCP server with tools for trigger_malak_monitoring, list_identified_actors, and manual_blockchain_disclosure."
+    },
+    {
+      "name": "Project Restructuring (legacy-runtime/ migration)",
+      "status": "In Progress",
+      "description": "Migrated from legacy performer path to etzhayyim-project-malak with legacy-runtime/ flat structure."
+    },
+    {
+      "name": "Threat Intelligence Crawler",
+      "status": "In Progress",
+      "description": "Autonomous OSINT threat intelligence crawler collecting phishing sites, fake apps/ads, spam, malware URLs, Interpol notices, Telegram channels, and dark web .onion sites. Stores IOCs in natad/LanceDB and indexes to natad/LanceDB for full-text search. Component: ti-crawler-mcp-component, WADM: malak-ti-crawler-t8k3m2p5."
+    }
+  ],
+  "rdfUnifiedDocuments": {
+    "@type": "Dataset",
+    "name": "Unified top-level RDF/JSON-LD documents",
+    "description": "Consolidated from project top-level *.jsonld files except PROJECT.jsonld.",
+    "documents": [
+      {
+        "fileName": "activities.jsonld",
+        "content": {
+          "@context": "https://schema.etzhayyim.com/context.jsonld",
+          "@type": "OperationalActivity",
+          "id": "act:operation-malak",
+          "name": "Operation Malak",
+          "description": "Continuous cyber crime intelligence gathering, technical fingerprinting, analysis, and disclosure operation targeting adversarial actors.",
+          "subActivities": [
+            {
+              "id": "act:identify-actor",
+              "name": "Adversarial Actor Identification",
+              "description": "Searching and identifying potential adversarial actors using DNS forensics, email header analysis, and linguistic fingerprinting."
+            },
+            {
+              "id": "act:analyze-intelligence",
+              "name": "Intelligence Analysis",
+              "description": "Analyzing gathered technical fingerprints using Gemini 3 Flash to determine threat levels, actor intent, and attribution confidence."
+            },
+            {
+              "id": "act:blockchain-disclosure",
+              "name": "Blockchain Evidence Disclosure",
+              "description": "Publishing tracking results, evidence artifacts, and attribution findings to an immutable blockchain ledger for tamper-proof record keeping."
+            },
+            {
+              "id": "act:external-coordination",
+              "name": "Law Enforcement Coordination",
+              "description": "Communicating investigation findings with Interpol and government agencies via MCP tools for cross-border cyber crime prosecution support."
+            },
+            {
+              "id": "act:continuous-monitoring",
+              "name": "Continuous Threat Monitoring",
+              "description": "Ongoing autonomous surveillance and alerting for identified threat actors and emerging cyber crime patterns."
+            },
+            {
+              "id": "act:ti-crawl",
+              "name": "Threat Intelligence Crawling",
+              "description": "Automated collection of IOCs from OSINT feeds (PhishTank, URLhaus, AbuseIPDB, Spamhaus, INTERPOL, Telegram, dark web). Scheduler-driven with KV persistence and natad/LanceDB ingest."
+            }
+          ]
+        }
+      },
+      {
+        "fileName": "capabilities.jsonld",
+        "content": {
+          "@context": "https://schema.etzhayyim.com/context.jsonld",
+          "@type": "Capability",
+          "id": "cap:cyber-crime-actor-tracking",
+          "name": "Cyber Crime Actor Tracking and Information Disclosure Capability",
+          "description": "Capability to autonomously track, analyze, and disclose information about cyber crime actors and adversarial entities using multi-faceted technical fingerprinting, AI-powered intelligence analysis, and blockchain-based immutable evidence logging.",
+          "goals": [
+            "Identify adversarial actors in real-time using DNS, email, and linguistic fingerprinting",
+            "Analyze actor behavior, intent, and threat levels using Gemini 3 Flash intelligence",
+            "Maintain immutable tracking logs and evidence on blockchain ledger",
+            "Coordinate with international law enforcement (Interpol) and government agencies via MCP",
+            "Provide autonomous monitoring and alerting for ongoing cyber crime investigations"
+          ],
+          "performers": [
+            "perf:operation-malak",
+            "perf:malak-analyzer",
+            "perf:blockchain-gateway",
+            "perf:mcp-coordinator",
+            "perf:ti-crawler"
+          ]
+        }
+      },
+      {
+        "fileName": "scheduler.jsonld",
+        "content": {
+          "@context": [
+            "https://schema.org/",
+            {
+              "etzhayyim": "https://etzhayyim.com/schemas/",
+              "capabilities": "etzhayyim:capabilities",
+              "survivalIndicators": "etzhayyim:survivalIndicators",
+              "scheduler": "etzhayyim:scheduler",
+              "milestones": "etzhayyim:milestones",
+              "blockers": "etzhayyim:blockers",
+              "dependsOn": {
+                "@id": "etzhayyim:dependsOn",
+                "@type": "@id"
+              },
+              "ingestKey": "etzhayyim:ingestKey",
+              "window": "etzhayyim:window",
+              "valueUpdatedAt": "etzhayyim:valueUpdatedAt"
+            }
+          ],
+          "@type": "CreativeWork",
+          "name": "Operation Malak — Cyber Crime Actor Tracking & Disclosure Scheduler",
+          "identifier": "etzhayyim-project-malak/scheduler",
+          "description": "Project schedule (milestones) and blockers.",
+          "dateCreated": "2026-02-15T04:25:26+00:00",
+          "milestones": [],
+          "blockers": []
+        }
+      }
+    ]
+  }
+}

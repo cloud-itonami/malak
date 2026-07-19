@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ja" data-lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title lang="ja">情報提供のご希望 — malak.surveillance</title>
+<title lang="en">Request information — malak.surveillance</title>
+<link rel="stylesheet" href="_shared.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="brand">malak.surveillance</div>
+  <nav>
+    <a href="index.html"><span lang="ja">トップ</span><span lang="en">Top</span></a>
+    <a href="tech.html"><span lang="ja">技術</span><span lang="en">Tech</span></a>
+    <a href="trust.html"><span lang="ja">プライバシー</span><span lang="en">Privacy</span></a>
+    <a href="contact.html"><span lang="ja">問合せ</span><span lang="en">Contact</span></a>
+    <a href="unsubscribe.html"><span lang="ja">配信停止</span><span lang="en">Unsubscribe</span></a>
+    <span class="lang-toggle" role="group"><button data-set="ja">日本語</button><button data-set="en">EN</button></span>
+  </nav>
+</header>
+
+<main>
+<h1 lang="ja">情報提供のご希望</h1>
+<h1 lang="en">Request information</h1>
+
+<p lang="ja">本フォームは、貴機関ご自身の意思による情報提供希望 (opt-in) を取得するためのものです。送信後の連絡は amanomibashira (運営) 担当より、<strong>平日 09:00-17:00 JST</strong> 内にメールでお送りします。EU 加盟国の方には GDPR Article 14 開示を別途お送りします。</p>
+<p lang="en">This form captures your express opt-in to receive technical information. We will respond from amanomibashira (operating entity, Japan) by email during <strong>09:00–17:00 your local time, weekdays</strong>. For EU recipients, an Art 14 GDPR disclosure will be sent separately.</p>
+
+<form id="contact-form">
+  <fieldset>
+    <legend lang="ja">所属</legend>
+    <legend lang="en">Your affiliation</legend>
+    <label>
+      <span lang="ja">機関区分</span><span lang="en">Agency category</span> <span class="req">必須 / required</span>
+      <select name="agencyType" required>
+        <option value="">— <span lang="ja">選択してください</span><span lang="en">please select</span> —</option>
+        <option value="prefectural">JP 都道府県警察 / Japanese prefectural police</option>
+        <option value="npa">JP 警察庁 / NPA Japan</option>
+        <option value="jcg">JP 海上保安庁 / Japan Coast Guard</option>
+        <option value="jc3">JC3 / Japan Cybercrime Control Center</option>
+        <option value="interpol">INTERPOL (IPSG / NCB / Cybercrime Directorate)</option>
+        <option value="europol">Europol / Eurojust</option>
+        <option value="federal_lea_us">US federal LEA (FBI / HSI / USSS / DEA / ATF / USMS / FinCEN)</option>
+        <option value="federal_lea_uk">UK federal LEA (NCA / NCCU / NCSC / Action Fraud / Met SO15)</option>
+        <option value="federal_lea_ca">CAN federal LEA (RCMP NC3 / CSIS / CSE)</option>
+        <option value="federal_lea_au">AUS federal LEA (AFP / ACIC / ASIO / ASD / AUSTRAC)</option>
+        <option value="federal_lea_eu">EU national LEA (BKA / DGSI / Polizia di Stato / Politie / Policía Nacional / etc.)</option>
+        <option value="other">Other / その他</option>
+      </select>
+    </label>
+    <label>
+      <span lang="ja">部署</span><span lang="en">Unit / department</span>
+      <small lang="ja">(例: 生活安全部サイバー犯罪対策課)</small>
+      <small lang="en">(e.g. Cyber Division, Counter-Fraud Unit)</small>
+      <input type="text" name="department" maxlength="120" />
+    </label>
+    <label>
+      <span lang="ja">役職 / 役割</span><span lang="en">Role / title</span>
+      <small lang="ja">(例: 課長補佐, 警部, Senior Analyst)</small>
+      <small lang="en">(e.g. Senior Analyst, Inspector, Section Chief)</small>
+      <input type="text" name="role" maxlength="60" />
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend lang="ja">ご連絡先</legend>
+    <legend lang="en">Contact details</legend>
+    <label>
+      <span lang="ja">姓 / Family name</span><span lang="en">Family name</span> <span class="req">必須 / required</span>
+      <input type="text" name="surname" required maxlength="60" autocomplete="family-name" />
+    </label>
+    <label>
+      <span lang="ja">名 / Given name</span><span lang="en">Given name</span>
+      <input type="text" name="given" maxlength="60" autocomplete="given-name" />
+    </label>
+    <label>
+      <span lang="ja">メールアドレス</span><span lang="en">Email address</span> <span class="req">必須 / required</span>
+      <input type="email" name="email" required maxlength="120" autocomplete="email" />
+    </label>
+    <label>
+      <span lang="ja">電話番号</span><span lang="en">Phone</span>
+      <small lang="ja">(任意 — 必要時の折り返し用)</small>
+      <small lang="en">(optional — for callback if needed)</small>
+      <input type="tel" name="phone" maxlength="20" autocomplete="tel" />
+    </label>
+    <label>
+      <span lang="ja">所在国 (ISO 3166-1 alpha-3)</span><span lang="en">Country (ISO 3166-1 alpha-3)</span>
+      <small lang="en">(used to apply jurisdiction-appropriate compliance frameworks)</small>
+      <input type="text" name="jurisdiction" maxlength="20" placeholder="jpn / usa / gbr / deu / intl:interpol ..." />
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend lang="ja">情報提供希望の経緯 (opt-in source)</legend>
+    <legend lang="en">Opt-in source</legend>
+    <p class="notice" lang="ja">本サービスは特定電子メール法 §3 / CAN-SPAM / PECR / GDPR に基づき、以下 4 経路の opt-in 取得のみで連絡をお送りします。</p>
+    <p class="notice" lang="en">Under Japan's Anti-Spam Act §3, US CAN-SPAM, UK PECR and EU GDPR, we send outreach only via one of the four opt-in sources below.</p>
+    <label class="radio"><input type="radio" name="optInSource" value="exhibition_list" /> <span lang="ja">展示会・公開イベントでお名刺を交換</span><span lang="en">Met at an exhibition or public event</span></label>
+    <label class="radio"><input type="radio" name="optInSource" value="lecture_host" /> <span lang="ja">講演・研究発表の主催者経由でご紹介を受けた</span><span lang="en">Introduced via the host of a lecture or research presentation</span></label>
+    <label class="radio"><input type="radio" name="optInSource" value="referral" /> <span lang="ja">知人・第三者からのご紹介</span><span lang="en">Referred by an acquaintance or third party</span></label>
+    <label class="radio"><input type="radio" name="optInSource" value="inbound" checked /> <span lang="ja">本ページを直接ご覧になりお問合せ</span><span lang="en">Reached out directly via this page</span></label>
+    <label>
+      <span lang="ja">具体的経緯</span><span lang="en">Concrete provenance</span>
+      <small lang="ja">(任意 — 展示会名・紹介者名・参照したページ等)</small>
+      <small lang="en">(optional — event name, referrer, page URL, etc.)</small>
+      <input type="text" name="optInEvidence" maxlength="160" />
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend lang="ja">関心領域</legend>
+    <legend lang="en">Areas of interest</legend>
+    <label class="radio"><input type="radio" name="useCasePitch" value="fraud" /> <span lang="ja">特殊詐欺・組織犯罪</span><span lang="en">Fraud networks / organised crime</span></label>
+    <label class="radio"><input type="radio" name="useCasePitch" value="missingPerson" /> <span lang="ja">行方不明者捜索</span><span lang="en">Missing-person investigation</span></label>
+    <label class="radio"><input type="radio" name="useCasePitch" value="streetCrime" /> <span lang="ja">街頭犯罪</span><span lang="en">Street crime</span></label>
+    <label class="radio"><input type="radio" name="useCasePitch" value="interpolCooperation" /> <span lang="en">INTERPOL cross-border tracking</span><span lang="ja">INTERPOL 国境横断追跡</span></label>
+  </fieldset>
+
+  <fieldset>
+    <legend lang="ja">個人情報の取扱い (APPI / GDPR Art 14 開示)</legend>
+    <legend lang="en">Personal data handling (APPI / GDPR Art 14 disclosure)</legend>
+    <p class="notice" lang="ja">
+      本フォーム送信時に取得する情報は、amanomibashira (運営) が「特定電子メール法 §3 同意取得」「個人情報保護法 §17 利用目的特定」のもとで管理します。
+      氏名は backend で AES-256-GCM 暗号化のうえ保管され、平文は Cloudflare 等のエッジ層に保存されません。
+      EU 加盟国所在の方への送信は GDPR Article 6(1)(f) 正当な利益に基づき、いつでも反対可能です。
+      US 所在の方への送信は CAN-SPAM 16 CFR 316.5 に従い、本文には sender 物理住所 + 動作する unsubscribe link が含まれます。
+      オプトアウトは <a href="unsubscribe.html">/unsubscribe</a> 又はメール末尾のリンクから即時可能です。
+    </p>
+    <p class="notice" lang="en">
+      The data captured here is held by amanomibashira (operating entity) under the lawful bases of "Anti-Spam Act §3 opt-in" and "APPI §17 purpose specification" (and GDPR Art 6(1)(f) legitimate interest where applicable). Surnames/given names are stored AES-256-GCM-encrypted in the backend; plaintext never reaches edge-layer infrastructure (Cloudflare etc.). EU recipients can object to processing at any time. US-bound outreach complies with CAN-SPAM 16 CFR 316.5 — every message carries the sender's physical mailing address and a functional unsubscribe link. Opt-out is immediate via <a href="unsubscribe.html">/unsubscribe</a> or via the unsubscribe link in any message.
+    </p>
+    <label class="checkbox"><input type="checkbox" name="consent" /> <span lang="ja">上記を理解し、情報提供を希望します。</span><span lang="en">I understand the above and consent to receive information.</span></label>
+  </fieldset>
+
+  <button class="submit" type="submit"><span lang="ja">送信</span><span lang="en">Submit</span></button>
+  <div id="result" class="result" style="display:none"></div>
+</form>
+
+<p class="back" style="margin-top:2rem;font-size:0.85rem;">
+  <a href="index.html"><span lang="ja">← トップへ戻る</span><span lang="en">← back to top</span></a>
+</p>
+
+</main>
+
+<footer class="site">
+  <div lang="ja">運営: amanomibashira / 技術受託: Etzhayyim Japan株式会社</div>
+  <div lang="en">Operating entity: amanomibashira / Technical contractor: Etzhayyim Japan株式会社</div>
+  <div class="postal">amanomibashira c/o Etzhayyim Japan株式会社 — 〒XXX-XXXX 東京都千代田区 ... (CAN-SPAM physical address)</div>
+  <div>privacy@etzhayyim.ai · malak-surveillance@etzhayyim.ai</div>
+</footer>
+
+<script src="_shared.js"></script>
+<script>
+(function () {
+  const form = document.getElementById("contact-form");
+  const result = document.getElementById("result");
+  function lang() { return document.documentElement.getAttribute("data-lang") || "ja"; }
+  function msg(ja, en) { return lang() === "en" ? en : ja; }
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const data = Object.fromEntries(fd.entries());
+    if (!data.consent) {
+      result.textContent = msg("個人情報の取扱いへの同意が必要です。", "Consent to personal-data handling is required.");
+      result.className = "result err"; result.style.display = "block"; return;
+    }
+    if (!data.optInSource) {
+      result.textContent = msg("opt-in source を選択してください。", "Please select an opt-in source.");
+      result.className = "result err"; result.style.display = "block"; return;
+    }
+    const payload = {
+      prefecture: data.agencyType === "npa" ? "NPA"
+                : data.agencyType === "jc3" ? "JC3"
+                : data.agencyType === "jcg" ? "JCG"
+                : data.agencyType === "interpol" ? "intl:interpol"
+                : data.agencyType === "europol" ? "intl:europol"
+                : "",
+      addresseeRole: data.role || "",
+      department: data.department || "",
+      plaintextSurname: data.surname,
+      plaintextGiven: data.given || "",
+      contactEmail: data.email,
+      contactPhone: data.phone || "",
+      addresseeJurisdiction: data.jurisdiction || "",
+      optInSource: data.optInSource,
+      optInAt: new Date().toISOString(),
+      optInEvidence: data.optInEvidence || ("inbound:" + location.host + "/surveillance/contact"),
+      useCasePitch: data.useCasePitch || undefined,
+    };
+    try {
+      const res = await fetch("/xrpc/com.etzhayyim.apps.malak.registerAgencyProspect", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const j = await res.json().catch(function () { return {}; });
+      if (j.status === "registered" || j.status === "phase0_stub") {
+        result.textContent = msg(
+          "受領しました。担当 (amanomibashira) より平日 09:00-17:00 JST 内にご連絡します。",
+          "Received. Someone from amanomibashira will reply during weekday 09:00–17:00 JST."
+        );
+        result.className = "result ok"; form.reset();
+      } else {
+        result.textContent = msg(
+          "登録できませんでした (" + (j.status || res.status) + "). " + (j.error || ""),
+          "Could not register (" + (j.status || res.status) + "). " + (j.error || "")
+        );
+        result.className = "result err";
+      }
+    } catch (err) {
+      result.textContent = msg("送信エラー: ", "Submit error: ") + err.message;
+      result.className = "result err";
+    }
+    result.style.display = "block";
+  });
+})();
+</script>
+</body>
+</html>

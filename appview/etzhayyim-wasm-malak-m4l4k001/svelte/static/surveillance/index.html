@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ja" data-lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title lang="ja">malak.surveillance — 監視カメラ シーン/人物検索 + 倫理ガード設計</title>
+<title lang="en">malak.surveillance — Open-vocabulary scene search with ethics-by-design</title>
+<link rel="stylesheet" href="_shared.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="brand">malak.surveillance</div>
+  <nav>
+    <a href="index.html"><span lang="ja">トップ</span><span lang="en">Top</span></a>
+    <a href="tech.html"><span lang="ja">技術</span><span lang="en">Tech</span></a>
+    <a href="trust.html"><span lang="ja">プライバシー</span><span lang="en">Privacy</span></a>
+    <a href="contact.html"><span lang="ja">問合せ</span><span lang="en">Contact</span></a>
+    <a href="unsubscribe.html"><span lang="ja">配信停止</span><span lang="en">Unsubscribe</span></a>
+    <span class="lang-toggle" role="group" aria-label="Language">
+      <button data-set="ja">日本語</button>
+      <button data-set="en">EN</button>
+    </span>
+  </nav>
+</header>
+
+<main>
+
+<div lang="ja">
+  <p style="color:var(--muted);font-size:0.85rem;letter-spacing:0.2em;margin:0;">めひかり (旧称 mehikari) — 2026-05-13 統合済</p>
+  <h1>malak.surveillance <small>監視カメラ AI 検索 + 倫理ガード設計</small></h1>
+  <p>監視カメラ映像のシーン記述検索 + 令状ゲート付き人物再特定。<br/>
+  日本の警察捜査支援と INTERPOL 加盟国の国境横断捜査協力を目的とした、プライバシー設計を最初に固めた技術です。</p>
+</div>
+<div lang="en">
+  <p style="color:var(--muted);font-size:0.85rem;letter-spacing:0.2em;margin:0;">formerly "mehikari" — merged 2026-05-13</p>
+  <h1>malak.surveillance <small>ethics-first surveillance scene + person search</small></h1>
+  <p>Open-vocabulary scene search on street CCTV footage with warrant-gated person re-identification.<br/>
+  Designed for Japanese police investigation support and INTERPOL-member cross-border cooperation; ethics-by-design first, capability second.</p>
+</div>
+
+<section>
+  <h2><span lang="ja">設計の前提</span><span lang="en">Design invariants</span></h2>
+  <ol lang="ja">
+    <li><strong>顔特徴量は国内 GPU 拠点内のみ。</strong>AES-256-GCM 暗号化で保管され、Cloudflare / 外部 LLM / 海外推論基盤への送信は protocol レベルで遮断されています。</li>
+    <li><strong>シーン記述検索と人物再特定を経路レベルで分離。</strong>属性検索は令状不要、既知人物の再特定は令状又は捜査関係事項照会書 + 上席承認がハードゲート。</li>
+    <li><strong>top-1 自動採用は不可能。</strong>人間判断介在義務 (human review gate) を Conditional edge で必須化、レビュー記録なしには証拠パケット出力に進めません。</li>
+    <li><strong>音声トラックは ingest 時点で破棄。</strong>通信の秘密 (電気通信事業法4条) 配慮。</li>
+    <li><strong>監査ログは 7 年保管。</strong>append-only、sha256 chain で改ざん検証可能。</li>
+    <li><strong>cooperation_status による国際 LEA フィルタ。</strong>INTERPOL 196 加盟国のうち sanctioned / restricted 国はoutreach 対象から hard-exclude。</li>
+  </ol>
+  <ol lang="en">
+    <li><strong>Face templates stay inside a JP on-prem GPU pod.</strong> AES-256-GCM at rest; egress to Cloudflare or non-JP inference providers is protocol-level blocked.</li>
+    <li><strong>Scene search and person re-identification are separated at the path level.</strong> Attribute-only search needs no warrant; known-person re-identification is hard-gated on warrant or formal-enquiry reference + supervisor approval.</li>
+    <li><strong>Top-1 auto-adoption is architecturally impossible.</strong> The human_review_gate is a Conditional edge in the LangGraph chain; no recorded review = no evidence packet.</li>
+    <li><strong>Audio is dropped at ingest.</strong> Compliant with Telecommunications Business Act §4 (secrecy of communication).</li>
+    <li><strong>Audit logs retained 7 years.</strong> Append-only, SHA-256 chain for tamper verification.</li>
+    <li><strong>International LEA filter by cooperation_status.</strong> Of 196 INTERPOL members, jurisdictions under sanctions / restricted cooperation are hard-excluded from outreach.</li>
+  </ol>
+</section>
+
+<section>
+  <h2><span lang="ja">想定利用シーン</span><span lang="en">Use cases</span></h2>
+  <dl lang="ja">
+    <dt>特殊詐欺の受け子同一性照合</dt>
+    <dd>複数現場の街頭カメラから類似属性の人物クリップを抽出。再特定は令状ゲート経由で確定。</dd>
+    <dt>行方不明者捜索</dt>
+    <dd>家族同意 + 警察依頼に基づき、人物特定情報を入力した再特定検索を実行。</dd>
+    <dt>街頭犯罪のシーン検索</dt>
+    <dd>「黒いフード・自転車・午後10時前後」のような自然言語記述で時間帯横断のクリップを抽出。</dd>
+    <dt>INTERPOL Red Notice 対象の国境横断追跡支援</dt>
+    <dd>INTERPOL Constitution Article 32 + 加盟国 NCB の協定に沿った国際協力。</dd>
+  </dl>
+  <dl lang="en">
+    <dt>Fraud-network mule re-identification</dt>
+    <dd>Extract candidate clips of attribute-matched persons across multiple incident sites; re-identification proceeds only via the warrant gate.</dd>
+    <dt>Missing-person investigation support</dt>
+    <dd>With family consent + LE request, run identification-input re-id search.</dd>
+    <dt>Open-vocabulary scene search for street crime</dt>
+    <dd>Extract clips by descriptions like "black hoodie, bicycle, around 22:00" — time/location-agnostic.</dd>
+    <dt>INTERPOL Red Notice cross-border tracking support</dt>
+    <dd>International cooperation aligned with INTERPOL Constitution Art. 32 and member-state NCB agreements.</dd>
+  </dl>
+</section>
+
+<section>
+  <h2><span lang="ja">運営・実装責任</span><span lang="en">Operating &amp; implementation responsibility</span></h2>
+  <table>
+    <tr><th lang="ja">運営主体</th><th lang="en">Operating entity</th>
+        <td>amanomibashira (operating entity, Japan)</td></tr>
+    <tr><th lang="ja">実装受託</th><th lang="en">Technical contractor</th>
+        <td>Etzhayyim Japan株式会社</td></tr>
+    <tr><th lang="ja">個情法上の取扱事業者</th><th lang="en">Personal-data controller (APPI)</th>
+        <td>amanomibashira</td></tr>
+    <tr><th lang="ja">顔特徴量管理責任者</th><th lang="en">Face-template custodian</th>
+        <td>amanomibashira CLO</td></tr>
+    <tr><th lang="ja">監査ログ保管期間</th><th lang="en">Audit log retention</th>
+        <td>7 <span lang="ja">年 (法定)</span><span lang="en">years (statutory)</span></td></tr>
+    <tr><th lang="ja">インシデント窓口</th><th lang="en">Incident contact</th>
+        <td>privacy@etzhayyim.ai (24h)</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span lang="ja">詳細</span><span lang="en">More</span></h2>
+  <ul>
+    <li><a href="tech.html"><span lang="ja">技術仕様 — アーキテクチャ / 推論経路 / 暗号化</span><span lang="en">Technical specification — architecture / inference paths / encryption</span></a></li>
+    <li><a href="trust.html"><span lang="ja">プライバシー設計と法令準拠</span><span lang="en">Privacy design and compliance</span></a></li>
+    <li><a href="contact.html"><span lang="ja">情報提供のご希望 (opt-in form)</span><span lang="en">Request information (opt-in form)</span></a></li>
+  </ul>
+</section>
+
+<p class="notice" lang="ja">本ページは公務員倫理規程・特定電子メール法・CAN-SPAM・PECR・GDPR に配慮し、招待・贈答・無料デモ提供等の利益供与に該当する文言を含みません。本サービスは警察庁通達 R6 公開草案 + 個人情報保護委員会 生体識別子ガイドライン草案を踏まえて設計されています。確定通達公開後 30 日以内に技術仕様を再確認します。</p>
+<p class="notice" lang="en">This page complies with Japanese public-service ethics, the Anti-Spam Act (Tokutei Denshi Mail Ho), US CAN-SPAM, UK PECR, and EU GDPR. It contains no language constituting invitations, gifts, or free-demo offers. The system is designed against the draft NPA R6 procurement notice + the PPC biometric guidelines draft; we will re-audit within 30 days of the final notice's publication.</p>
+
+</main>
+
+<footer class="site">
+  <div lang="ja">運営: amanomibashira (operating entity, Japan) / 技術実装受託: Etzhayyim Japan株式会社</div>
+  <div lang="en">Operating entity: amanomibashira (Japan) / Technical contractor: Etzhayyim Japan株式会社</div>
+  <div class="postal">amanomibashira c/o Etzhayyim Japan株式会社 — 〒XXX-XXXX 東京都千代田区 ... (CAN-SPAM physical address — finalised before Phase 1 launch)</div>
+  <div>privacy@etzhayyim.ai · malak-surveillance@etzhayyim.ai</div>
+  <div>© 2026 amanomibashira</div>
+</footer>
+
+<script src="_shared.js"></script>
+</body>
+</html>

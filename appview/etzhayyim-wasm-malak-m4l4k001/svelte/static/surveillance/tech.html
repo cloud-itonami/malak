@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ja" data-lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title lang="ja">技術仕様 — malak.surveillance</title>
+<title lang="en">Technical specification — malak.surveillance</title>
+<link rel="stylesheet" href="_shared.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="brand">malak.surveillance</div>
+  <nav>
+    <a href="index.html"><span lang="ja">トップ</span><span lang="en">Top</span></a>
+    <a href="tech.html"><span lang="ja">技術</span><span lang="en">Tech</span></a>
+    <a href="trust.html"><span lang="ja">プライバシー</span><span lang="en">Privacy</span></a>
+    <a href="contact.html"><span lang="ja">問合せ</span><span lang="en">Contact</span></a>
+    <a href="unsubscribe.html"><span lang="ja">配信停止</span><span lang="en">Unsubscribe</span></a>
+    <span class="lang-toggle" role="group"><button data-set="ja">日本語</button><button data-set="en">EN</button></span>
+  </nav>
+</header>
+
+<main>
+<h1 lang="ja">技術仕様</h1>
+<h1 lang="en">Technical specification</h1>
+
+<section>
+  <h2><span lang="ja">1. アーキテクチャ</span><span lang="en">1. Architecture</span></h2>
+  <p lang="ja">ADR-2605111200 (CF Worker = Edge Layer; RisingWave への接続は K8s pod のみ) に準拠。</p>
+  <p lang="en">Per ADR-2605111200 (CF Worker = Edge Layer; RisingWave connections only from K8s pods).</p>
+<pre>
+[police LAN] --mTLS--> [CF Worker malak.etzhayyim.ai (edge)] --XRPC--> [bpmn-dispatcher (k8s, JP)]
+                                                                    |
+                              +-------------------------------------+---+
+                              |                                         |
+                              v                                         v
+                      [LangGraph Server (Granian L3)]             [pyzeebe worker]
+                              |                                         |
+                              v  inference                              v  INSERT/SELECT
+                      [murakumo on-prem (JP DC, NVIDIA)]          [RisingWave Vultr LAX]
+</pre>
+  <p lang="ja">CF Worker は state を持たず、env.HYPERDRIVE もない。全 read/write は XRPC → bpmn-dispatcher → pod 経由。</p>
+  <p lang="en">The CF Worker is stateless and has no Hyperdrive binding. All read/write goes XRPC → bpmn-dispatcher → pod.</p>
+</section>
+
+<section>
+  <h2><span lang="ja">2. 推論経路 (国内拘束)</span><span lang="en">2. Inference paths (domestic residency)</span></h2>
+  <table class="bordered">
+    <tr><th lang="ja">処理</th><th lang="en">Task</th>
+        <th lang="ja">場所</th><th lang="en">Location</th>
+        <th lang="ja">送信されるデータ</th><th lang="en">Data crossed</th></tr>
+    <tr><td>frame decode (ffmpeg + nvjpeg)</td><td>murakumo on-prem (JP)</td><td><span lang="ja">raw mp4 (R2 → fetch, 揮発)</span><span lang="en">raw mp4 fetched from R2, in-memory only</span></td></tr>
+    <tr><td>face detection + arcface embedding</td><td>murakumo on-prem (JP)</td><td><span lang="ja">frame jpeg (in-memory)</span><span lang="en">frame jpeg (in-memory)</span></td></tr>
+    <tr><td>person ReID (OSNet)</td><td>murakumo on-prem (JP)</td><td><span lang="ja">同上</span><span lang="en">same</span></td></tr>
+    <tr><td>scene CLIP encoding</td><td>murakumo on-prem (JP)</td><td><span lang="ja">同上</span><span lang="en">same</span></td></tr>
+    <tr><td>OCR (JP plate / sign)</td><td>murakumo on-prem (JP)</td><td><span lang="ja">同上</span><span lang="en">same</span></td></tr>
+    <tr><td>scene query NL parser (text-only)</td><td>RunPod US-KS-2 (vLLM gemma-4-26B)</td><td><span lang="ja">シーン記述文字列のみ — PII 非含有</span><span lang="en">scene description string only — no PII</span></td></tr>
+    <tr><td>sales draft generation</td><td>RunPod US-KS-2</td><td><span lang="ja">担当者氏名は暗号化 ciphertext、template には埋め込まない</span><span lang="en">addressee names stay encrypted; never inlined into template</span></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span lang="ja">3. 暗号化と vault</span><span lang="en">3. Encryption &amp; vault</span></h2>
+  <ul lang="ja">
+    <li>顔特徴量 (template) は AES-256-GCM (ciphertext + wrapped key + kid) で保管。master key は JP 国内拘束。</li>
+    <li>復号は murakumo on-prem の Trusted Compute エンクレーブ内でのみ。Worker / Hyperdrive / R2 経路には平文が物理的に存在しない設計。</li>
+    <li>営業 lead の担当者氏名も同方式で暗号化保管。送信時のみ pod 内で展開 → message body に埋め込み → 送信後即 GC。</li>
+  </ul>
+  <ul lang="en">
+    <li>Face templates are stored as AES-256-GCM (ciphertext + wrapped key + kid). The master key is geofenced to Japan.</li>
+    <li>Decryption only inside the murakumo on-prem Trusted Compute enclave. Plaintext physically cannot exist on the Worker / Hyperdrive / R2 path.</li>
+    <li>Outreach addressee names are encrypted with the same scheme. They are decrypted inside the pod only at send time, inlined into the message body, then GC'd immediately.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span lang="ja">4. データ保管期間</span><span lang="en">4. Retention</span></h2>
+  <table class="bordered">
+    <tr><th lang="ja">データ</th><th lang="en">Data class</th>
+        <th lang="ja">期間</th><th lang="en">Period</th>
+        <th lang="ja">破棄手段</th><th lang="en">Destruction</th></tr>
+    <tr><td><span lang="ja">Raw clip mp4</span><span lang="en">Raw mp4 clip</span></td>
+        <td><span lang="ja">案件確定後 90 日</span><span lang="en">90 days after case closure</span></td>
+        <td><span lang="ja">R2 lifecycle (hard delete)</span><span lang="en">R2 lifecycle (hard delete)</span></td></tr>
+    <tr><td><span lang="ja">Frame jpeg cache</span><span lang="en">Frame jpeg cache</span></td>
+        <td>30 days</td><td>lifecycle</td></tr>
+    <tr><td><span lang="ja">face template (encrypted)</span><span lang="en">Face template (encrypted)</span></td>
+        <td><span lang="ja">案件解決 1 年後</span><span lang="en">1 year after case resolution</span></td>
+        <td>DELETE + key destruction</td></tr>
+    <tr><td><span lang="ja">Embeddings (clip / reid)</span><span lang="en">Embeddings (clip / reid)</span></td>
+        <td><span lang="ja">案件解決 1 年後</span><span lang="en">1 year after case resolution</span></td>
+        <td>index rebuild w/o entry</td></tr>
+    <tr><td><span lang="ja">Audit log</span><span lang="en">Audit log</span></td>
+        <td><span lang="ja">7 年 (法定)</span><span lang="en">7 years (statutory)</span></td>
+        <td>S3 archive</td></tr>
+    <tr><td><span lang="ja">Sales lead / consent</span><span lang="en">Sales lead / consent</span></td>
+        <td><span lang="ja">opt-out 即時 / 5 年</span><span lang="en">on opt-out immediately / 5 years</span></td>
+        <td>DELETE (no soft-delete)</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span lang="ja">5. 関連 ADR</span><span lang="en">5. Related ADRs</span></h2>
+  <ul>
+    <li>ADR-2605111200 — CF Worker = Edge-Only; RW 接続は K8s Pod のみ</li>
+    <li>ADR-2605091400 — MCP as cell membrane (XRPC は内部 cytoplasmic wire)</li>
+    <li>ADR-2605080600 — LangGraph Server + Granian L3 Runtime</li>
+    <li>ADR-2605082000 — LangGraph Graph-Definition-as-Data</li>
+    <li>ADR-2605082200 — PyZeebe Handler Thin Dispatcher Contract</li>
+    <li>ADR-2605010000 — RunPod 6000 Ada (LLM inference SSoT, text-only)</li>
+    <li>ADR-0048 — RisingWave Vultr + B2 primary</li>
+    <li>ADR-0036 — 3-Tier Write (Social / Domain / State)</li>
+  </ul>
+</section>
+
+</main>
+
+<footer class="site">
+  <div lang="ja">運営: amanomibashira / 技術受託: Etzhayyim Japan株式会社</div>
+  <div lang="en">Operating entity: amanomibashira / Technical contractor: Etzhayyim Japan株式会社</div>
+  <div class="postal">amanomibashira c/o Etzhayyim Japan株式会社 — 〒XXX-XXXX 東京都千代田区 ... (CAN-SPAM physical address)</div>
+  <div>privacy@etzhayyim.ai · malak-surveillance@etzhayyim.ai</div>
+</footer>
+
+<script src="_shared.js"></script>
+</body>
+</html>
