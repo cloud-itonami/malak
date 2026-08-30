@@ -4,6 +4,16 @@
 
 Cybercriminal intelligence disclosure platform. Tracks, analyzes, and publishes structured threat actor profiles as public malaknotes.
 
+> **Read this first if you are new to the checkout.** The rest of this README
+> describes the whole operation; this repository holds only its *edge* tier —
+> a Cloudflare Worker facade, a SvelteKit front end and a Playwright suite. The
+> MCP methods, the publishing pipeline and the ISCO team below are implemented
+> elsewhere (`migration.edn` names the source coordinate). Today the front end
+> cannot be installed, the deployment hosts do not resolve, and the one part
+> that still runs — the four edge refusal gates — needs no install at all.
+> **[`docs/operator-quickstart.md`](docs/operator-quickstart.md)** has the
+> commands and their real transcripts.
+
 ## What is a malaknote?
 
 A **malaknote** is a public disclosure document produced from open-source intelligence (OSINT) analysis of cybercriminal threat actors. Each note is:
